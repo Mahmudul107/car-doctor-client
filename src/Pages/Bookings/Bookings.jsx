@@ -16,7 +16,7 @@ const Bookings = () => {
 
   
   const handleDelete = (id) => {
-    const proceed = Swal.fire({
+    Swal.fire({
       title: "Are you sure?",
       text: "You won't be able to revert this!",
       icon: "warning",
@@ -24,24 +24,30 @@ const Bookings = () => {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
-    })
-  
-    if (proceed) {
-      fetch(`http://localhost:5000/bookings/${id}`, {
-        method: 'DELETE'
-      })
-      .then(res => res.json())
-      .then(data => {
-        console.log(data);
-        if (data.deletedCount > 0) {
-          Swal.fire("Deleted!", "Your Coffee has been deleted.", "success");
-          const remaining = bookings.filter(booking => booking._id !== id);
-          setBookings(remaining);
-        }
-      })
-    }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        fetch(`http://localhost:5000/bookings/${id}`, {
+          method: "DELETE",
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            console.log(data);
+            if (data.deletedCount > 0) {
+              Swal.fire(
+                "Deleted!",
+                "Your Coffee has been deleted.",
+                "success"
+              );
+              const remaining = bookings.filter(
+                (booking) => booking._id !== id
+              );
+              setBookings(remaining);
+            }
+          });
+      }
+    });
   };
-
+  
 
   const handleBookingConfirm = id => {
     fetch(`http://localhost:5000/bookings/${id}`, {
