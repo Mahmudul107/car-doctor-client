@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { AuthContext } from "../../provider/AuthProvider";
 import BookingRow from "./BookingRow";
 import Swal from "sweetalert2";
+import { data } from "autoprefixer";
 
 const Bookings = () => {
   const { user } = useContext(AuthContext);
