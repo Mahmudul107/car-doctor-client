@@ -2,50 +2,34 @@ import React, { useContext } from "react";
 import login from "../../assets/images/login/login.svg";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../provider/AuthProvider";
+import SocialLogin from "../SocialLogin/SocialLogin";
 
 const Login = () => {
+  const { signIn } = useContext(AuthContext);
+  const location = useLocation();
+  const navigate = useNavigate();
 
-  const {signIn} = useContext(AuthContext)
-  const location = useLocation()
-  const navigate = useNavigate()
+  const from = location.state?.from?.pathname || "/";
 
-  const from = location.state?.from?.pathname || '/'
+  const handleLogin = (e) => {
+    e.preventDefault();
 
-    const handleLogin = e => {
-        e.preventDefault()
+    const form = e.target;
+    const email = form.email.value;
+    const password = form.password.value;
+    console.log(email, password);
 
-        const form = e.target;
-        const email = form.email.value;
-        const password = form.password.value;
-        console.log( email, password);
-
-        signIn(email, password)
-        .then(result =>{
-          const user = result.user;
-          const loggedUser = {
-            email: user.email,
-          }
-          console.log(loggedUser)
-          navigate(from, {replace: true})
-          fetch('http://localhost:5000/jwt', {
-            method: 'POST',
-            headers: {'content-type': 'application/json'},
-            body: JSON.stringify(loggedUser)
-          })
-          .then(res => res.json())
-          .then( data => {
-            console.log('JWT responding', data);
-
-            // Warning:  Local storage is not the best option store jwt token ( 2nd best option )
-            localStorage.setItem('Car-access-token', data.token);
-          })
-
-        })
-        .catch(err =>{
-          console.error(err);
-        })
+    signIn(email, password)
+      .then((result) => {
+        const user = result.user;
         
-    }
+        console.log(user);
+        navigate(from, { replace: true });
+      })
+      .catch((err) => {
+        console.error(err);
+      });
+  };
 
   return (
     <div className="hero min-h-screen bg-base-200">
@@ -92,7 +76,13 @@ const Login = () => {
                 />
               </div>
             </form>
-             <p className="my-4 text-center">New to car doctors <Link className="text- text-orange-600 font-bold" to='/signUp'>Sign Up</Link></p>
+            <p className="my-4 text-center">
+              New to car doctors{" "}
+              <Link className="text- text-orange-600 font-bold" to="/signUp">
+                Sign Up
+              </Link>
+            </p>
+            <SocialLogin />
           </div>
         </div>
       </div>
